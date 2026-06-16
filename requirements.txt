@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+pydantic
+requests
+langgraph
+langchain
+groq
+langchain_core
+streamlit
+scikit-learn
+numpy
+pandas
+matplotlib
+seaborn
+ping3
