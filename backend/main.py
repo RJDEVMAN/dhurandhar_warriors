@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 app = FastAPI(
-    title="Network Intelligence Testing"
+    title="AlphaNet Telemetry FastAPI structure"
 )
 
 
@@ -26,7 +26,7 @@ latest_telemetry = {
 
 
 # NETWORK ---> FASTAPI
-@app.post("/telemetry")
+@app.post("/telemetry", description="Receive telemetry data from network devices and store it in the DB of AlphaNet")
 def receive_telemetry(data: Telemetry):
 
     global latest_telemetry
@@ -64,9 +64,8 @@ def receive_telemetry(data: Telemetry):
 
 
 
-
 # DASHBOARD / AI ---> FASTAPI
-@app.get("/latest")
+@app.get("/latest", description="Get the latest telemetry data and show it on the dashboard")
 def get_latest_telemetry():
 
     return latest_telemetry
