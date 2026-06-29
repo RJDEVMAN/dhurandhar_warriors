@@ -1,79 +1,65 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-from datetime import datetime
-
+from models import Telemetry
 
 app = FastAPI(
-    title="AlphaNet Telemetry FastAPI structure"
+    title="AlphaNet Telemetry FastAPI"
 )
 
-
-class Telemetry(BaseModel):
-    device: str
-    cpu: float
-    latency: float
-    packet_loss: float
-    bandwidth: float
-
-
-
-# stores latest network state
+network_state = {}
 latest_telemetry = {
-    "status": "waiting",
-    "message": "No telemetry received yet"
+
+    "status":"waiting",
+
+    "message":"No telemetry received yet"
+
 }
 
 
 
 # NETWORK ---> FASTAPI
-@app.post("/telemetry", description="Receive telemetry data from network devices and store it in the DB of AlphaNet")
+@app.post("/telemetry")
 def receive_telemetry(data: Telemetry):
 
-    global latest_telemetry
+    global network_state
+    
+    network_state[data.device] = data.model_dump()
 
-
-    latest_telemetry = {
-
-        "status": "active",
-
-        "timestamp": datetime.now().strftime(
-            "%Y-%m-%d %H:%M:%S"
-        ),
-
-        "device": data.device,
-
-        "cpu": data.cpu,
-
-        "latency": data.latency,
-
-        "packet_loss": data.packet_loss,
-
-        "bandwidth": data.bandwidth
-    }
-
-
-
+    print("\n")
     print("🚨 NETWORK TELEMETRY RECEIVED")
+
     print(f"Device      : {data.device}")
     print(f"CPU         : {data.cpu}%")
     print(f"Latency     : {data.latency} ms")
     print(f"Packet Loss : {data.packet_loss}%")
     print(f"Bandwidth   : {data.bandwidth}%")
 
-    return latest_telemetry
+    print("\n")
+
+    return {
+
+        "status":"received",
+
+        "device":data.device
+
+    }
 
 
 
 # DASHBOARD / AI ---> FASTAPI
-@app.get("/latest", description="Get the latest telemetry data and show it on the dashboard")
+
+@app.get("/latest")
 def get_latest_telemetry():
 
-    return latest_telemetry
+    return network_state
+
+
 
 @app.get("/")
 def home():
 
     return {
+
         "message":
-        "backend running"
+        "AlphaNet Backend Running"
+
     }

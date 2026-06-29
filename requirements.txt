@@ -13,3 +13,4 @@ pandas
 matplotlib
 seaborn
 ping3
+dotenv

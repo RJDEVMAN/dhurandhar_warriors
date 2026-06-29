@@ -1,15 +1,15 @@
-# AstraOps - AI Driven Network Monitoring System
+# AlphaNet - AI Driven Network Monitoring System
 
 ## Overview
 
-AstraOps is an Agentic AI based network monitoring and incident analysis platform.
+AlphaNet is a Human-in-the-loop based network monitoring and incident analysis platform.
 
 The current PoC consists of:
 
-- Cisco Packet Tracer based MPLS network simulation
+- GNS3 based MPLS network simulation
 - Python telemetry collector
 - FastAPI telemetry ingestion layer
-- AI analysis pipeline (in development)
+- AI analysis pipeline
 
 The objective is to monitor network health, detect failures, and provide automated root cause analysis.
 
@@ -51,7 +51,6 @@ PC1 ↔ PC2
 ## Devices Used
 
 Routers:
-
 - CE1 : Customer Edge Router 1
 - PE1 : Provider Edge Router 1
 - P1  : Provider Core Router
@@ -63,14 +62,10 @@ End Devices:
 - PC1
 - PC2
 
-
-Router Model:
-Cisco 2901 ISR Router
-
 ---
 
 # IP Addressing Scheme
-
+# These are sample values provided for understanding, actual production uses different values
 ## CE1
 
 Interfaces:
