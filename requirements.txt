@@ -14,3 +14,10 @@ matplotlib
 seaborn
 ping3
 dotenv
+langchain-community
+langchain-huggingface
+sentence-transformers
+chromadb
+langchain-chroma
+beautifulsoup4
+pypdf

@@ -320,3 +320,13 @@ SNMP
 GNS3/EVE-NG
 Real network devices
 can be added.
+
+For RAG implementation
+Important steps:-
+Step 1. cd dhurandhar_warriors_repo
+Step 2. cd agents
+Step 3. cd rag_pipeline
+Step 4. run all the scripts in the folder
+Step 5. Update the Knowledge Agent by connecting PostGreSQL to the RAG pipeline
+Step 6. Create your own chroma_db by running the scripts in rag_pipeline
+Step 7. From the output of the JSON, test how the pipeline is working entirely

@@ -2,6 +2,7 @@ from typing import TypedDict,Dict, List
 from dotenv import load_dotenv
 from langgraph.graph import StateGraph, START, END
 from groq_client import ask_groq
+from rag_pipeline.retriever import retrieve_context
 # Establishing Groq client
 load_dotenv()
 
@@ -27,11 +28,6 @@ class AlphaNetState(TypedDict):
 
 # Establishing Supervisor agent
 def Supervisor_agent(state: AlphaNetState):
-    """
-    You are the Supervisor Agent of AlphaNet, your job is to supervise the network provided, monitor 
-    the health of each of the points, it is a MPLS network, if you find any anomaly via the telemetry received,
-    transfer the information to Diagnosis agent otherwise, report to the system as 'Normal Mode'.
-    """
     network = state["network_state"]
     critical_devices = []
     for device,data in network.items():
@@ -56,24 +52,16 @@ def Supervisor_agent(state: AlphaNetState):
             critical_devices.append(device)
 
     if critical_devices:
-
-
         print(
         f"Anomaly detected in {critical_devices}"
         )
-
-
         state["current_agent"] = (
             "diagnosis_agent"
         )
     else:
-
-
         print(
         "Network healthy"
         )
-
-
         state["current_agent"] = (
             "monitoring"
         )
@@ -106,20 +94,12 @@ def diagnosis_agent(
         )
 # Initially, Rule-based detection is established.
         if (
-
             latency > 200
-
             or packet_loss > 10
-
             or status=="CRITICAL"
-
         ):
+            print(f"Incident detected: {device}")
 
-
-
-            print(
-            f"⚠ Incident detected: {device}"
-            )
 # Reasoning Layer is our 1st step towards building a productive analytic AI network in AlphaNet.
             prompt=f"""
             Network Incident is detected as follows:
@@ -192,4 +172,61 @@ def diagnosis_agent(
     return state
 
 # Establishing the Knowledge agent
-# Add the code for Knowledge base agent and Recommendation agent here.
+# We are moving forward with a Hybrid structure:- RAG + PostGreSQL pipeline for the KB Agent.
+def knowledge_agent(state: AlphaNetState):
+    diagnosis = state["diagnosis"]
+    incidents = diagnosis.get(
+        "incidents",
+        []
+    )
+    knowledge_output = []
+    for incident in incidents:
+        query = f"""
+
+        Device: {incident['device']}
+
+        Severity: {incident['severity']}
+
+        Analysis:
+
+        {incident['AI_analysis']}
+
+        """
+        context = retrieve_context(query)
+
+        prompt = f"""
+        You are AlphaNet's Knowledge Agent.
+        Your main task revolves around analyzing the network incident provided, using the context from the knowledge base.
+        Use ONLY the provided documentation.
+        Context:
+        {context}
+        Current Incident:
+        {incident}
+
+        Tasks:
+        1. Explain the protocol involved.
+        2. Explain possible propagation.
+        3. Explain historical engineering practices.
+        4. Estimate operational impact.
+        Return JSON only.
+
+"""
+
+        response = ask_groq(prompt)
+
+        knowledge_output.append(response)
+
+    state["impact_analysis"] = {
+
+        "analysis_completed": True,
+
+        "knowledge": knowledge_output
+
+    }
+
+    state["current_agent"] = "prediction_agent"
+
+    return state
+# Here, add the connection between the RAG pipeline and PostGreSQL DB for the knowledge agent. 
+# The RAG pipeline will retrieve relevant information from the knowledge base, and the PostGreSQL DB 
+# will store and manage the structured data for further analysis and decision-making.

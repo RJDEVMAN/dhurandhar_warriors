@@ -1,3 +1,5 @@
 /dhurandhar_project
 __pycache__
 .env
+/agents/rag_pipeline/chroma_db
+/datasets_pdf
